@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: ru.zelenux.springprojects.helloworld2.Helloworld2Application
+
