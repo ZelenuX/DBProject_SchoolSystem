@@ -5,6 +5,30 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-    <p th:text="'Hello, ' + ${name} + '!'" />
+    <p th:text="'Hello, ' + ${name} + '!'"></p>
+    <form action="#" th:action="@{/greeting}" th:object="${flat}" method="post">
+        <p>Price: <input type="number" th:field="*{price}" /></p>
+        <p>SqrMeters: <input type="number" th:field="*{sqrMeters}" /></p>
+        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+    </form>
+    <table>
+        <thead>
+        <tr>
+            <th></th>
+            <th>price</th>
+            <th>sqrMeters</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${!flats.iterator().hasNext()}">
+            <td colspan="2"> No flats </td>
+        </tr>
+        <tr th:each="flat : ${flats}">
+            <td><span th:text="${flat.id} + ':'"> Title </span></td>
+            <td><span th:text="${flat.price}"> Title </span></td>
+            <td><span th:text="${flat.sqrMeters}"> Author </span></td>
+        </tr>
+        </tbody>
+    </table>
 </body>
 </html>
