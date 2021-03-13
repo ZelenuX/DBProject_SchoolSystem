@@ -9,17 +9,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.zelenux.springprojects.helloworld2.dbInteraction.entities.Flat;
 import ru.zelenux.springprojects.helloworld2.dbInteraction.repositories.FlatRepos;
-import ru.zelenux.springprojects.helloworld2.dbInteraction.repositories.PersonRepos;
 
 @Controller
 public class GreetingController {
     private final FlatRepos flatRepos;
-    private final PersonRepos personRepos;
 
     @Autowired
-    public GreetingController(FlatRepos flatRepos, PersonRepos personRepos) {
+    public GreetingController(FlatRepos flatRepos) {
         this.flatRepos = flatRepos;
-        this.personRepos = personRepos;
     }
     @GetMapping("/greeting")
     public String greetingForm(@RequestParam(name="name", required=false, defaultValue="Customer") String name, Model model) {
@@ -30,7 +27,7 @@ public class GreetingController {
     }
     @PostMapping("/greeting")
     public String greetingSubmit(@ModelAttribute Flat flat,
-            @RequestParam(name="name", required=false, defaultValue="World") String name, Model model){
+            @RequestParam(name="name", required=false, defaultValue="Customer") String name, Model model){
         System.out.println("\t" + flat.getId() + ": " + flat.getPrice() + "$ " + flat.getSqrMeters() + "m^2");
         model.addAttribute("flat", flatRepos.save(flat));
         return "result";

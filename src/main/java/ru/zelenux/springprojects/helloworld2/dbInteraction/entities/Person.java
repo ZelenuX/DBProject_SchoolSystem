@@ -34,4 +34,24 @@ public class Person {
     public Flat getFlat(){
         return flat;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+    public void setFlat(Flat flat) {
+        this.flat = flat;
+    }
+
+    public boolean isInitialized(){
+        return !(name == null || surname == null || age == null);
+    }
 }

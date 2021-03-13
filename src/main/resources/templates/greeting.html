@@ -24,9 +24,9 @@
             <td colspan="2"> No flats </td>
         </tr>
         <tr th:each="flat : ${flats}">
-            <td><span th:text="${flat.id} + ':'"> Title </span></td>
-            <td><span th:text="${flat.price}"> Title </span></td>
-            <td><span th:text="${flat.sqrMeters}"> Author </span></td>
+            <td><span th:text="${flat.id} + ':'"></span></td>
+            <td><span th:text="${flat.price}"></span></td>
+            <td><span th:text="${flat.sqrMeters}"></span></td>
         </tr>
         </tbody>
     </table>
