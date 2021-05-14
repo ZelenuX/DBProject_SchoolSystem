@@ -5,6 +5,8 @@ import ru.school.database.backend.entities.Lessons;
 import ru.school.database.backend.entities.Students;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -33,6 +35,8 @@ public class LessonMarks implements Serializable {
 
     @Column(name = "value", nullable = false)
     @NotNull
+    @Min(value = 1, message = "must be >= 1")
+    @Max(value = 5, message = "must be <= 5")
     private Long value;
 
     @Column(name = "comment")

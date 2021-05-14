@@ -3,6 +3,8 @@ package ru.school.database.backend.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -21,6 +23,7 @@ public class Teachers implements Serializable {
 
     @Column(name = "experience_years", nullable = false)
     @NotNull
+    @Min(value = 0, message = "must be >= 0")
     private Long experienceYears;
 
     @Column(name = "education_degree")
@@ -28,6 +31,8 @@ public class Teachers implements Serializable {
 
     @Column(name = "max_hours_a_week", nullable = false)
     @NotNull
+    @Min(value = 0, message = "must be >= 0")
+    @Max(value = 48, message = "must be <= 48")
     private Long maxHoursAWeek;
 
     @Column(name = "about_me")

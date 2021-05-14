@@ -53,7 +53,7 @@ public class MainView extends AppLayout {
     }
     private Component buildBestStudentsPage(){
         Grid<BestStudent> bestStudentGrid = new Grid<>(BestStudent.class);
-        bestStudentGrid.setColumns("firstName", "secondName", "lastName", "value");
+        bestStudentGrid.setColumns("firstName", "secondName", "lastName", "averageValue");
         bestStudentGrid.setSortableColumns("firstName", "secondName", "lastName");
         Button refreshButton = new Button("refresh", event -> {
             bestStudentGrid.setItems(specialInfoExtractor.getBestStudents());

@@ -5,12 +5,12 @@ import lombok.Getter;
 @Getter
 public class BestStudent {
     private String firstName, secondName, lastName;
-    private String value;
+    private String averageValue;
 
-    public BestStudent(String firstName, String secondName, String lastName, String value) {
+    public BestStudent(String firstName, String secondName, String lastName, String averageValue) {
         this.firstName = firstName;
         this.secondName = secondName;
         this.lastName = lastName;
-        this.value = value;
+        this.averageValue = averageValue;
     }
 }
