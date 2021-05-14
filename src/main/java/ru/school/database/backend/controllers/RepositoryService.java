@@ -1,27 +1,42 @@
 package ru.school.database.backend.controllers;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.transaction.annotation.Transactional;
 import org.vaadin.crudui.form.FieldProvider;
+import ru.school.database.backend.filteringUtils.EntitySpecification;
+import ru.school.database.backend.filteringUtils.ObjectProvider;
+import ru.school.database.backend.filteringUtils.SearchCriteria;
 import ru.school.database.ui.utils.MyComboBoxProvider;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public abstract class RepositoryService<Entity, ID> {//todo add: addForeignProvider ~ setIdProvider
+public abstract class RepositoryService<Entity, ID> {//todo 1st: change editing existing entity to creating new one in add and update methods
     private final  JpaRepository<Entity, ID> repository;
     private final  Class<Entity> entityClass;
     private final List<Column> cols = new ArrayList<>();
+    private final Map<String, Column> namesToCols = new HashMap<>();
     private final Map<String, FieldProvider> fieldProviders = new HashMap<>();
     private final Map<String, JpaRepository> fieldRepositories = new HashMap<>();
-    private IdProvider idProvider = null;
+    private IdProvider<Entity> idProvider = null;
+    private List<IdProvider<Entity>> foreignKeyProviders = new ArrayList<>();
+    private EntitySpecification<Entity> specification = new EntitySpecification<>();
+    private boolean specificationBuilt = false;
 
     public RepositoryService(JpaRepository<Entity, ID> repository, Class<Entity> entityClass, String... colNames){
         this.repository = repository;
         this.entityClass = entityClass;
         for (String colName : colNames) {
-            this.cols.add(new Column(colName));
+            Column newCol = new Column(colName);
+            this.cols.add(newCol);
+            this.namesToCols.put(newCol.getName(), newCol);
         }
     }
     public Class<Entity> getEntityClass(){
@@ -37,17 +52,36 @@ public abstract class RepositoryService<Entity, ID> {//todo add: addForeignProvi
         }
         return res;
     }
+    public void buildSpecification(Map<String, ObjectProvider> filters){
+        if (specificationBuilt){
+            return;
+        }
+        filters.forEach((fieldName, valueProvider) -> {
+            specification.addCriteria(new SearchCriteria(fieldName, valueProvider));
+        });
+        specificationBuilt = true;
+    }
     protected void setComboboxFieldProvider(String colName, JpaRepository provider){
-        fieldProviders.put(colName, new MyComboBoxProvider(provider));
+        fieldProviders.put(colName, new MyComboBoxProvider(provider, namesToCols.get(colName).isFinal()));
         fieldRepositories.put(colName, provider);
     }
     protected void setIdProvider(String srcColDotMethod, String idCol){
+        if (idProvider == null) {
+            String[] colAndMethod = srcColDotMethod.split("\\.");
+            idProvider = new IdProvider<>(entityClass, colAndMethod[0], colAndMethod[1], idCol);
+        }
+    }
+    protected void addForeignKeyProvider(String srcColDotMethod, String idCol){
         String[] colAndMethod = srcColDotMethod.split("\\.");
-        idProvider = new IdProvider<>(entityClass, colAndMethod[0], colAndMethod[1], idCol);
+        foreignKeyProviders.add(new IdProvider<>(entityClass, colAndMethod[0], colAndMethod[1], idCol));
     }
 
     public List<Entity> findAll(){
         return repository.findAll();
+    }
+    public List<Entity> findAllFiltered(){
+        List<Entity> res = ((JpaSpecificationExecutor)repository).findAll(specification);
+        return res;
     }
     public void delete(Entity entity){
         repository.delete(entity);
@@ -66,6 +100,7 @@ public abstract class RepositoryService<Entity, ID> {//todo add: addForeignProvi
             }
             idProvider.setIdAndClearSrcCol(entity);
         }
+        foreignKeyProviders.forEach(provider -> provider.setIdAndClearSrcCol(entity));
         try {
             return repository.save(entity);
         }
@@ -78,7 +113,7 @@ public abstract class RepositoryService<Entity, ID> {//todo add: addForeignProvi
         }
     }
     @Transactional
-    public Entity update(Entity entity){
+    public Entity update(Entity entity){             //todo: delete old entity
         if (idProvider != null){
             String srcColName = idProvider.getSrcColName();
             ID newId = (ID)idProvider.getSrcId(entity);
@@ -98,6 +133,7 @@ public abstract class RepositoryService<Entity, ID> {//todo add: addForeignProvi
             }
             catch (Exception ignored) {}
         }
+        foreignKeyProviders.forEach(provider -> provider.setIdAndClearSrcCol(entity));
         try {
             return repository.save(entity);
         }
@@ -115,6 +151,8 @@ public abstract class RepositoryService<Entity, ID> {//todo add: addForeignProvi
         private final String name;
         private boolean isAutoGenerated = false;
         private boolean isCombobox = false;
+        private boolean isFinal = false;
+        private boolean isTime = false;
 
         public Column(String colName){
             String[] colNameParts = colName.split("-");
@@ -131,6 +169,13 @@ public abstract class RepositoryService<Entity, ID> {//todo add: addForeignProvi
                         case "combobox":
                             isCombobox = true;
                             break;
+                        case "finalCombobox":
+                            isFinal = true;
+                            isCombobox = true;
+                            break;
+                        case "time":
+                            isTime = true;
+                            break;
                         default:
                             throw new RuntimeException("Unknown column type specifier: " + colNameParts[i]);
                     }
@@ -145,6 +190,12 @@ public abstract class RepositoryService<Entity, ID> {//todo add: addForeignProvi
         }
         public boolean isCombobox() {
             return isCombobox;
+        }
+        public boolean isFinal() {
+            return isFinal;
+        }
+        public boolean isTime(){
+            return isTime;
         }
     }
     private static class IdProvider<Entity>{

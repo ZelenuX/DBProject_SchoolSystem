@@ -1,16 +1,16 @@
 package ru.school.database.backend.entities;
 
 import lombok.Data;
+import ru.school.database.backend.entities.People;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name = "students")
-public class Students implements Serializable {
+@Table(name = "helpers")
+public class Helpers implements Serializable {
 
     @Id
     @Column(name = "people_id", nullable = false)
@@ -20,13 +20,8 @@ public class Students implements Serializable {
     @JoinColumn(name = "people_id")
     private People people;
 
-    @Column(name = "education_start_date", nullable = false)
+    @Column(name = "work", nullable = false)
     @NotNull
-    private LocalDate educationStartDate;
-
-    @Override
-    public String toString(){
-        return people.toString();
-    }
+    private String work;
 
 }

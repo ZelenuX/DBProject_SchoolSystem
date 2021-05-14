@@ -12,10 +12,12 @@ import java.util.Collection;
 public class MyComboBoxProvider<T> extends AbstractListingProvider<ComboBox<T>, T> {
     private ItemLabelGenerator<T> itemLabelGenerator;
     private JpaRepository repository;
+    private boolean readOnly = false;
 
-    public MyComboBoxProvider(JpaRepository repository) {
+    public MyComboBoxProvider(JpaRepository repository, boolean readOnly) {
         super(repository.findAll());
         this.repository = repository;
+        this.readOnly = readOnly;
     }
 
     public MyComboBoxProvider(String caption, JpaRepository repository) {
@@ -40,6 +42,8 @@ public class MyComboBoxProvider<T> extends AbstractListingProvider<ComboBox<T>, 
         }
 
         field.setItems(this.items);
+        //field.setEnabled(!readOnly);
+        //field.setReadOnly(readOnly);
         return field;
     }
 }

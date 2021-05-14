@@ -9,7 +9,7 @@ import ru.school.database.backend.repositories.StudentsRepository;
 @Service
 public class StudentsService extends RepositoryService<Students, Long> {
     public StudentsService(@Autowired StudentsRepository studentsRepository, @Autowired PeopleRepository peopleRepository){
-        super(studentsRepository, Students.class, "auto-peopleId", "combobox-people", "educationStartDate");
+        super(studentsRepository, Students.class, "auto-peopleId", "finalCombobox-people", "educationStartDate");
         super.setComboboxFieldProvider("people", peopleRepository);
         super.setIdProvider("people.getId", "peopleId");
     }

@@ -4,11 +4,12 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Data
 @Entity
 @Table(name = "teachers")
-public class Teachers {
+public class Teachers implements Serializable {
 
     @Id
     @Column(name = "people_id", nullable = false)
@@ -31,5 +32,10 @@ public class Teachers {
 
     @Column(name = "about_me")
     private String aboutMe;
+
+    @Override
+    public String toString(){
+        return people.toString();
+    }
 
 }

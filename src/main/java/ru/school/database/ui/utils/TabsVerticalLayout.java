@@ -30,7 +30,7 @@ public class TabsVerticalLayout extends HorizontalLayout {
         this.setSizeFull();
         this.add(tabs, pages);
         tabs.getStyle().set("background", "#f0f0f0");
-        tabs.setWidth("200px");
+        tabs.setWidth("250px");
         pages.setWidthFull();
         pages.setHeightFull();
     }

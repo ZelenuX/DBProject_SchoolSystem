@@ -2,8 +2,8 @@ package ru.school.database.backend.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import ru.school.database.backend.entities.Students;
+import ru.school.database.backend.entities.Helpers;
 
-public interface StudentsRepository extends JpaRepository<Students, Long>, JpaSpecificationExecutor<Students> {
+public interface HelpersRepository extends JpaRepository<Helpers, Long>, JpaSpecificationExecutor<Helpers> {
 
 }

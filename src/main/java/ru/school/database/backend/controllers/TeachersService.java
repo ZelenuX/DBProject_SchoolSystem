@@ -10,7 +10,7 @@ import ru.school.database.backend.repositories.TeachersRepository;
 public class TeachersService extends RepositoryService<Teachers, Long> {
     public TeachersService(@Autowired TeachersRepository teachersRepository, @Autowired PeopleRepository peopleRepository) {
         super(teachersRepository, Teachers.class,
-                "auto-peopleId", "combobox-people", "experienceYears", "educationDegree", "maxHoursAWeek", "aboutMe");
+                "auto-peopleId", "finalCombobox-people", "experienceYears", "educationDegree", "maxHoursAWeek", "aboutMe");
         super.setComboboxFieldProvider("people", peopleRepository);
         super.setIdProvider("people.getId", "peopleId");
     }

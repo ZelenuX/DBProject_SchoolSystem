@@ -4,12 +4,13 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Data
 @Entity
 @Table(name = "people")
-public class People {
+public class People implements Serializable {
 
     @Id
     @GeneratedValue
